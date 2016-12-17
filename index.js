@@ -47,7 +47,7 @@ const server = http.createServer((req, res) => {
 
             const { actor, pullrequest, repository } = body
 
-            const message = `@${users[actor.username] || actor.username} has made a PR '<${pullrequest.html.href}|${pullrequest.title}>'`
+            const message = `@${users[actor.username] || actor.username} has made a PR '<${pullrequest.links.html.href}|${pullrequest.title}>'`
                             + `from <${pullrequest.source.repository.links.html.href}/branch/${pullrequest.source.branch.name}|${pullrequest.source.branch.name}> ` 
                             + `into <${pullrequest.destination.repository.links.html.href}/branch/${pullrequest.destination.branch.name}|${pullrequest.destination.branch.name}> `
                             + `on <${repository.links.html.href}|${repository.name}>`
