@@ -52,17 +52,18 @@ const server = http.createServer((req, res) => {
                                 + `from <${pullrequest.source.repository.links.html.href}/branch/${pullrequest.source.branch.name}|${pullrequest.source.branch.name}> ` 
                                 + `into <${pullrequest.destination.repository.links.html.href}/branch/${pullrequest.destination.branch.name}|${pullrequest.destination.branch.name}> `
                                 + `on <${repository.links.html.href}|${repository.name}>`
+
+                console.log(message)
+
+                slack.sendMessage(message)
+
+                res.statusCode = 200
+                res.end()
+                return;
+
             } catch (e) {
                 console.log(e)
             }
-
-            console.log(message)
-
-            slack.sendMessage(message)
-
-            res.statusCode = 200
-            res.end()
-            return;
         })
     }
 
