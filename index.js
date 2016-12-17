@@ -57,13 +57,14 @@ const server = http.createServer((req, res) => {
 
                 slack.sendMessage(message)
 
-                res.statusCode = 200
-                res.end()
-                return;
-
             } catch (e) {
                 console.log(e)
             }
+            
+            res.statusCode = 200
+            res.end()
+            return;
+
         })
     }
 
