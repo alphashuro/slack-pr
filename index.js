@@ -54,7 +54,6 @@ const server = http.createServer((req, res) => {
                                 + `on <${repository.links.html.href}|${repository.name}>`
 
                 console.log(message)
-
                 slack.sendMessage(message)
 
             } catch (e) {
@@ -63,9 +62,9 @@ const server = http.createServer((req, res) => {
             
             res.statusCode = 200
             res.end()
-            return;
-
         })
+
+        return
     }
 
     res.statusCode = 404
