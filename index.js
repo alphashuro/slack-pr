@@ -8,6 +8,8 @@ const server = http.createServer((req, res) => {
 
         req.on('data', data => body += data)
         req.on('end', () => {
+            console.log(body)
+
             body = JSON.parse(body)
 
             console.log(body)
