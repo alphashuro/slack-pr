@@ -12,7 +12,7 @@ const server = http.createServer((req, res) => {
 
             const { actor, pullrequest, repository } = body
 
-            console.log(`${actor.name} has made a PR '${pullrequest.title}' from ${pullrequest.source.branch.name} into ${pullrequest.destination.branch.name} in ${repository.name}`);
+            console.log(`${actor.username} has made a PR '${pullrequest.title}' from ${pullrequest.source.branch.name} into ${pullrequest.destination.branch.name} in ${repository.name}`);
         })
 
         res.statusCode = 200
