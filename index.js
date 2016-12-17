@@ -32,6 +32,10 @@ const slack = {
     }
 }
 
+const users = {
+    'alpha-shuro': 'alpha',
+};
+
 const server = http.createServer((req, res) => {
 
     if (req.url === '/pr' && req.method === 'POST') {
@@ -43,7 +47,7 @@ const server = http.createServer((req, res) => {
 
             const { actor, pullrequest, repository } = body
 
-            const message = `${actor.username} has made a PR '${pullrequest.title}' from ${pullrequest.source.branch.name} into ${pullrequest.destination.branch.name} on ${repository.name}`
+            const message = `@${users[actor.username] || actor.username} has made a PR '${pullrequest.title}' from ${pullrequest.source.branch.name} into ${pullrequest.destination.branch.name} on ${repository.name}`
 
             console.log(message)
 
