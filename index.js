@@ -51,7 +51,7 @@ const server = http.createServer((req, res) => {
                 slack.sendMessage({
                     channel: '@alpha',
                     text: message,
-                }
+                })
             } catch (e) {
                 console.log(e)
             }
