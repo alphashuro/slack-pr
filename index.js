@@ -5,35 +5,33 @@ const port = process.env.PORT || 8080
 
 const slack = {
     sendMessage(opt) {
-        const data = JSON.stringify(opt)
-
-        const reqOptions = {
+        const req = https.request({
             hostname: 'hooks.slack.com',
             path: '/services/T1NQR00CT/B1RLAPLLF/qHGbexLENyAlO4PhT6md41Yy',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-        }
-
-        const req = https.request(reqOptions, res => {
-            console.log(`slack response: ${res.statusCode}`);
+        }, ({ statusCode }) => {
+            if (statusCode !== 200) {
+                console.log(`slack failed, status: ${res.statusCode}`)
+            }
         })
-
         req.on('error', console.log)
 
-        req.write(data);
-        req.end();
+        req.write(JSON.stringify(opt))
+        req.end()
     }
 }
 
 const users = {
     'alpha-shuro': 'alpha',
-};
+}
 
 const server = http.createServer((req, res) => {
+    const { url, method } = req
 
-    if (req.url === '/pr' && req.method === 'POST') {
+    if (url === '/pr' && method === 'POST') {
         let body = ''
 
         req.on('data', data => body += data)
@@ -42,19 +40,35 @@ const server = http.createServer((req, res) => {
 
             const { actor, pullrequest, repository } = body
 
-            try {
-                const message = `@${users[actor.username] || actor.username} has made a PR '<${pullrequest.links.html.href}|${pullrequest.title}>' `
-                                + `from <${pullrequest.source.repository.links.html.href}/branch/${pullrequest.source.branch.name}|${pullrequest.source.branch.name}> ` 
-                                + `into <${pullrequest.destination.repository.links.html.href}/branch/${pullrequest.destination.branch.name}|${pullrequest.destination.branch.name}> `
-                                + `on <${repository.links.html.href}|${repository.name}>`
+            const event = req.headers['X-Event-Key']
 
-                slack.sendMessage({
-                    channel: '@alpha',
-                    text: message,
-                })
+            try {
+                let message = ''
+
+                switch (event) {
+                    case 'pullrequest:created': {
+                        message = `@${users[actor.username] || actor.username} has made a PR '<${pullrequest.links.html.href}|${pullrequest.title}>' `
+                            + `from <${pullrequest.source.repository.links.html.href}/branch/${pullrequest.source.branch.name}|${pullrequest.source.branch.name}> ` 
+                            + `into <${pullrequest.destination.repository.links.html.href}/branch/${pullrequest.destination.branch.name}|${pullrequest.destination.branch.name}> `
+                            + `on <${repository.links.html.href}|${repository.name}>`
+                        break
+                    }
+                    default: {
+                        console.log(`unknown event: ${event}`)
+                    }
+                }
+
+                if (message) {
+                    slack.sendMessage({
+                        channel: '@alpha',
+                        text: message,
+                    })
+                }
             } catch (e) {
                 console.log(e)
             }
+
+
             
             res.statusCode = 200
             res.end()
