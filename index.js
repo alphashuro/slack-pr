@@ -5,16 +5,16 @@ const port = process.env.PORT || 8080
 
 const slack = {
     sendMessage(opt) {
-        const req = https.request({
+        const req = https.request({ // slack webhooks work via https
             hostname: 'hooks.slack.com',
-            path: '/services/T1NQR00CT/B1RLAPLLF/qHGbexLENyAlO4PhT6md41Yy',
+            path: '/services/T1NQR00CT/B1RLAPLLF/qHGbexLENyAlO4PhT6md41Yy', // slack webhook url
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
         }, ({ statusCode }) => {
             if (statusCode !== 200) {
-                console.log(`slack failed, status: ${res.statusCode}`)
+                console.log(`slack failed, status: ${res.statusCode}`) // only notify of errors
             }
         })
         req.on('error', console.log)
@@ -24,6 +24,7 @@ const slack = {
     }
 }
 
+// this is to map users' usernames from bitbucket to slack
 const users = {
     'alpha-shuro': 'alpha',
 }
@@ -40,7 +41,7 @@ const server = http.createServer((req, res) => {
 
             const { actor, pullrequest, repository } = body
 
-            const event = req.headers['X-Event-Key']
+            const event = req.headers['X-Event-Key'] // bitbucket event type
 
             try {
                 let message = ''
@@ -68,8 +69,6 @@ const server = http.createServer((req, res) => {
                 console.log(e)
             }
 
-
-            
             res.statusCode = 200
             res.end()
         })
